@@ -1,5 +1,8 @@
 ﻿Imports System.Data.OleDb
+Imports System.Data.Odbc
 Imports System.IO
+'Imports Microsoft.Data.Odbc
+'Imports System
 
 Public Class Database
 
@@ -408,7 +411,28 @@ Public Class Database
         Catch ex As Exception
             Connection.Close()
         End Try
+
+
+
     End Sub
+
+    Public Shared Sub UpdatePriceToInOrdersInfoSQL(strAU As String, strNewPrice As String)
+        strAU = strAU.Trim
+
+        Dim inputCommand As String
+        inputCommand = "UPDATE orders_info SET order_price='" + strNewPrice + "' WHERE order_num = '" + strAU + "'"
+
+        Dim id As Integer
+        Dim toSQLDatabase As String
+        toSQLDatabase = "S:\Job\in_house_software\OrdersInfoSQL_update.exe " & Chr(34) & inputCommand & Chr(34)
+
+        Try
+            id = Shell(toSQLDatabase, , True)
+        Catch
+        End Try
+
+    End Sub
+
 
     Public Shared Function GetCountry(strAU As String) As String
         Dim strDatabasePath As String = "C:\in_house_files\local_database\orders_info.dbf"

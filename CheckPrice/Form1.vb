@@ -857,6 +857,7 @@ done_already2:
 
         If chkUpdatePrice.Checked Then
             Database.Library.Database.UpdatePriceToInOrdersInfo(txtAuNumber.Text, dblActualPrice.ToString)
+            Database.Library.Database.UpdatePriceToInOrdersInfoSQL(txtAuNumber.Text, dblActualPrice.ToString)
         End If
         Database.Library.Database.UpdateDannedToTrue(txtAuNumber.Text)
         Database.Library.Database.UpdateDannedToTrueFaxBack(txtAuNumber.Text)
