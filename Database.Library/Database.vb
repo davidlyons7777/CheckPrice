@@ -419,15 +419,12 @@ Public Class Database
     Public Shared Sub UpdatePriceToInOrdersInfoSQL(strAU As String, strNewPrice As String)
         strAU = strAU.Trim
 
-        Dim inputCommand As String
-        inputCommand = "UPDATE orders_info SET order_price='" + strNewPrice + "' WHERE order_num = '" + strAU + "'"
-
-        Dim id As Integer
-        Dim toSQLDatabase As String
-        toSQLDatabase = "S:\Job\in_house_software\OrdersInfoSQL_update.exe " & Chr(34) & inputCommand & Chr(34)
+        Dim sqlCommand As String
+        sqlCommand = "UPDATE orders_info SET order_price='" + strNewPrice + "' WHERE order_num = '" + strAU + "'"
 
         Try
-            id = Shell(toSQLDatabase, , True)
+            Dim id As Integer
+            id = Shell("S:\Job\in_house_software\OMS_Dev_SQL_update " & Chr(34) & sqlCommand & Chr(34))
         Catch
         End Try
 

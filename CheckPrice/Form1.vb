@@ -1342,6 +1342,17 @@ done_already2:
         'End If
 
 
+        Dim extraInfo As String = "["
+        If (calculatorAPI.pcbAreasAdded < CDbl(charge_area) + 0.1) And (calculatorAPI.pcbAreasAdded > CDbl(charge_area) - 0.1) Then
+            For Each info In calculatorAPI.pcbInfoList
+                extraInfo = extraInfo & "{" & """pcb_width"":" & """" & info.pcbWidth & """" & ",""pcb_length"":" & """" & info.pcbLength & """" & ",""pcb_quantity"":" & """" & info.pcbQuantity & """" & ",""pcb_name"":" & """" & info.pcbName & """" & "},"
+            Next
+        Else
+            extraInfo = extraInfo & ","
+        End If
+        extraInfo = Mid(extraInfo, 1, extraInfo.Length - 1) & "]"
+
+
         strJSON =
 "{  
     ""language"": """ & language & """,  
@@ -1359,7 +1370,9 @@ done_already2:
         ""add_layoutfiles"":" & layouts & ",
         ""mehrfachnutzen"":" & multi & ",
         ""mehrfachnutzen_verarbeitung"":" & panel_processing & ",
-        ""lieferzeit_arbeitstage"":" & lead_time & " " + vbNewLine + " 
+        ""lieferzeit_arbeitstage"":" & lead_time & ",
+        ""extra_info"":" &
+        extraInfo & " " + vbNewLine + " 
         } ,
     ""original_price"": """ & strOriginalPrice & """, 
     ""actual_price"": """ & CStr(dblActualPrice) & """,  

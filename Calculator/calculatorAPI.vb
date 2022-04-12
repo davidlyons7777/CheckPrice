@@ -13,6 +13,15 @@ Public Class calculatorAPI
     Public Shared fp As Boolean = False
     Public Shared ref_number As String = ""
     Public Shared priceAPIResponse As String = ""
+    Public Shared pcbInfoList As ArrayList = New ArrayList
+    Public Shared pcbAreasAdded As Double
+
+    Public Class PCBInformation
+        Public Property pcbLength As Double
+        Public Property pcbWidth As Double
+        Public Property pcbQuantity As Integer
+        Public Property pcbName As String
+    End Class
 
     Public Shared Function GetTotalPrice(ByVal order As String)
         Dim order_str As String
@@ -43,6 +52,7 @@ Public Class calculatorAPI
         Dim TheMonth As String = CStr(Now.Month)
         Dim au_number As String
 
+
         If Len(TheMonth) < 2 Then TheMonth = "0" & TheMonth
 
         Dim partslist As Object
@@ -65,15 +75,26 @@ Public Class calculatorAPI
 
 
         fp = False
-        Try
-            Connection.Open()
-            Dim reader As OleDbDataReader = CommandResult.ExecuteReader(CommandBehavior.CloseConnection)
-            While reader.Read()
+        'Try
+        Connection.Open()
+        Dim reader As OleDbDataReader = CommandResult.ExecuteReader(CommandBehavior.CloseConnection)
+        pcbInfoList.Clear()
+        pcbAreasAdded = 0
+
+        While reader.Read()
                 au_num = Trim(reader.GetString(0))
                 If partslist.contains(au_num) Then GoTo done_already
-                partslist.add(au_num)
+            partslist.add(au_num)
 
-                charge_area = charge_area + ((Trim(reader.GetString(1))) * (Trim(reader.GetString(2))) * (Trim(reader.GetString(3)))) / 10000
+            Dim info As New PCBInformation
+            info.pcbLength = CDbl(Trim(reader.GetString(1)))
+            info.pcbWidth = CDbl(Trim(reader.GetString(2)))
+            info.pcbQuantity = CDbl(Trim(reader.GetString(3)))
+            info.pcbName = au_num
+            pcbInfoList.Add(info)
+            pcbAreasAdded = pcbAreasAdded + ((info.pcbLength * info.pcbWidth * info.pcbQuantity) / 10000)
+
+            charge_area = charge_area + ((Trim(reader.GetString(1))) * (Trim(reader.GetString(2))) * (Trim(reader.GetString(3)))) / 10000
                 If charge_area < CDbl(Trim(reader.GetString(3))) Then fp = True
 
 
@@ -107,9 +128,9 @@ Public Class calculatorAPI
 done_already:
             End While
             Connection.Close()
-        Catch ex As Exception
-            Connection.Close()
-        End Try
+        'Catch ex As Exception
+        'Connection.Close()
+        'End Try
 
 
         table = "C:\in_house_files\local_database\tiff_status.dbf"
