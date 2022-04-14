@@ -1105,7 +1105,7 @@ Partial Class frmMain
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Check Price  Ver11.00"
+        Me.Text = "Check Price  Ver12.00"
         Me.pnlSilk.ResumeLayout(False)
         Me.pnlSilk.PerformLayout()
         Me.pnlPool.ResumeLayout(False)

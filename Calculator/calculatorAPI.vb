@@ -20,7 +20,8 @@ Public Class calculatorAPI
         Public Property pcbLength As Double
         Public Property pcbWidth As Double
         Public Property pcbQuantity As Integer
-        Public Property pcbName As String
+        Public Property pcbPrecamName As String
+        Public Property pcbRef As String
     End Class
 
     Public Shared Function GetTotalPrice(ByVal order As String)
@@ -66,7 +67,7 @@ Public Class calculatorAPI
 
         Dim CommandText As String
 
-        CommandText = "SELECT au_num,x_size,y_size,qty,silk,t_gaps_spec,holes_spec,ger,score,rout1 FROM " + table + " WHERE order = '" + order + "' order by time_stamp DESC"
+        CommandText = "SELECT au_num,x_size,y_size,qty,silk,t_gaps_spec,holes_spec,ger,score,rout1,base_ref_number FROM " + table + " WHERE order = '" + order + "' order by time_stamp DESC"
 
 
         Dim ConnString As String = "Provider=VFPOLEDB.1;Data Source= " + table
@@ -90,7 +91,8 @@ Public Class calculatorAPI
             info.pcbLength = CDbl(Trim(reader.GetString(1)))
             info.pcbWidth = CDbl(Trim(reader.GetString(2)))
             info.pcbQuantity = CDbl(Trim(reader.GetString(3)))
-            info.pcbName = au_num
+            info.pcbPrecamName = au_num
+            info.pcbRef = Trim(reader.GetString(10))
             pcbInfoList.Add(info)
             pcbAreasAdded = pcbAreasAdded + ((info.pcbLength * info.pcbWidth * info.pcbQuantity) / 10000)
 

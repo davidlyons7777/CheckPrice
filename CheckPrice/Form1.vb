@@ -49,7 +49,7 @@ Public Class frmMain
     Dim strJSONResult As String
 
     Dim strOriginalPrice As String
-    Dim orderRefNumber As String
+    'Dim orderRefNumber As String
     Dim orderThickness As String
     Dim orderSurface As String
 
@@ -409,7 +409,7 @@ Public Class frmMain
         btnCheckPrice.Enabled = False
 
         lblTotalPrice.Text = "actual: " + Replace(lblTotalAPI.Text, "Total:", "")
-        GetOrderRefNumber()
+        'GetOrderRefNumber()
         GetOrderMaterialThickness()
         GetOrderSurface()
         GetCountry()
@@ -788,10 +788,10 @@ done_already2:
 
     End Sub
 
-    Private Sub GetOrderRefNumber()
-        Dim ref As String = Database.Library.Database.GetOrderRef(txtAuNumber.Text)
-        orderRefNumber = ref
-    End Sub
+    'Private Sub GetOrderRefNumber()
+    '    Dim ref As String = Database.Library.Database.GetOrderRef(txtAuNumber.Text)
+    '    orderRefNumber = ref
+    'End Sub
 
     Private Sub GetOrderMaterialThickness()
         Dim thickness As String = Database.Library.Database.GetOrderThickness(txtAuNumber.Text)
@@ -1283,12 +1283,12 @@ done_already2:
             silkscreen = 3  ' 1->TopOnly 2->BotOnly 3->TopAndBot
         End If
 
-        Dim track_gap_size As Integer = 0
+        Dim track_gap_size As Integer = 1
         If chkHiSpecGaps.Checked = True Then
             track_gap_size = 3
         End If
 
-        Dim drill_diameter As Integer = 0
+        Dim drill_diameter As Integer = 1
         If chkHiSpecDrills.Checked = True Then
             drill_diameter = 4
         End If
@@ -1338,14 +1338,13 @@ done_already2:
         ' precamNumber = "AU-" & TheYear & TheMonth & "/" & order
         ' Else
         precamNumberType = "ref_number"
-        precamNumber = orderRefNumber
+        precamNumber = calculatorAPI.ref_number
         'End If
-
 
         Dim extraInfo As String = "["
         If (calculatorAPI.pcbAreasAdded < CDbl(charge_area) + 0.1) And (calculatorAPI.pcbAreasAdded > CDbl(charge_area) - 0.1) Then
             For Each info In calculatorAPI.pcbInfoList
-                extraInfo = extraInfo & "{" & """pcb_width"":" & """" & info.pcbWidth & """" & ",""pcb_length"":" & """" & info.pcbLength & """" & ",""pcb_quantity"":" & """" & info.pcbQuantity & """" & ",""pcb_name"":" & """" & info.pcbName & """" & "},"
+                extraInfo = extraInfo & "{" & """pcb_width"":" & """" & info.pcbWidth & """" & ",""pcb_length"":" & """" & info.pcbLength & """" & ",""pcb_quantity"":" & """" & info.pcbQuantity & """" & ",""pcb_precam_name"":" & """" & info.pcbPrecamName & """" & ",""pcb_ref"":" & """" & info.pcbRef & """" & "},"
             Next
         Else
             extraInfo = extraInfo & ","
