@@ -67,12 +67,14 @@ Public Class calculatorAPI
 
         Dim CommandText As String
 
-        CommandText = "SELECT au_num,x_size,y_size,qty,silk,t_gaps_spec,holes_spec,ger,score,rout1,base_ref_number FROM " + table + " WHERE order = '" + order + "' order by time_stamp DESC"
+        CommandText = "SELECT au_num,x_size,y_size,qty,silk,t_gaps_spec,holes_spec,ger,score,rout1 FROM " + table + " WHERE order = '" + order + "' order by time_stamp DESC"
 
 
         Dim ConnString As String = "Provider=VFPOLEDB.1;Data Source= " + table
         Dim Connection As New OleDbConnection(ConnString)
         Dim CommandResult As New OleDbCommand(CommandText, Connection)
+
+
 
 
         fp = False
@@ -81,7 +83,7 @@ Public Class calculatorAPI
         Dim reader As OleDbDataReader = CommandResult.ExecuteReader(CommandBehavior.CloseConnection)
         pcbInfoList.Clear()
         pcbAreasAdded = 0
-
+        Dim pcbInfoPrecamNameTemp, pcbInfoRefTemp As String
         While reader.Read()
                 au_num = Trim(reader.GetString(0))
                 If partslist.contains(au_num) Then GoTo done_already
@@ -92,7 +94,8 @@ Public Class calculatorAPI
             info.pcbWidth = CDbl(Trim(reader.GetString(2)))
             info.pcbQuantity = CDbl(Trim(reader.GetString(3)))
             info.pcbPrecamName = au_num
-            info.pcbRef = Trim(reader.GetString(10))
+            pcbInfoPrecamNameTemp = au_num.Split("_")(0)
+            info.pcbRef = GetPCBRefNumber(pcbInfoPrecamNameTemp)
             pcbInfoList.Add(info)
             pcbAreasAdded = pcbAreasAdded + ((info.pcbLength * info.pcbWidth * info.pcbQuantity) / 10000)
 
@@ -133,7 +136,6 @@ done_already:
         'Catch ex As Exception
         'Connection.Close()
         'End Try
-
 
         table = "C:\in_house_files\local_database\tiff_status.dbf"
         CommandText = "SELECT pool,thickness,work_days FROM " + table + " WHERE order_num = '" + order + "' order by time_stamp DESC"
@@ -276,7 +278,15 @@ done_already2:
         Return Jresult
 
     End Function
-
+    Public Shared Function GetPCBRefNumber(ByVal pcb As String)
+        Dim ref As String
+        'Try
+        ref = Database.Library.Database.GetOrderRef(pcb)
+        'Catch
+        ' ref = "0"
+        ' End Try
+        Return ref
+    End Function
 
     Public Shared Function JsonRequest(ByVal order_str As String)
         Dim result As String

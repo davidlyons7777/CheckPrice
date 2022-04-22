@@ -43,7 +43,9 @@ Public Class Database
         End If
 
         commandText = "SELECT " + strSelectColumn + " FROM " + strTableName + " WHERE " + strWhereColumn + " = '" + strEquals + "' order by time_stamp DESC"
+
         Dim ConnString As String = "Provider=VFPOLEDB.1;Data Source= " + strDatabasePath
+
         Dim Connection As New OleDbConnection(ConnString)
         Dim CommandResult As New OleDbCommand(commandText, Connection)
 
@@ -51,7 +53,6 @@ Public Class Database
         Try
             Connection.Open()
             Dim reader As OleDbDataReader = CommandResult.ExecuteReader(CommandBehavior.CloseConnection)
-
 
             If multifields = False Then
                 While reader.Read()
@@ -85,11 +86,56 @@ Public Class Database
             Connection.Close()
         Catch ex As Exception
             Connection.Close()
+            strOutput = "0"
+            If InStr(UCase(commandText), "ORDERS_INFO") Then
+                Try
+                    Dim databasePath As String = "T:\Database3\orders_info.dbf"
+                    ConnString = "Provider=VFPOLEDB.1;Data Source= " + databasePath
+                    Connection = New OleDbConnection(ConnString)
+                    CommandResult = New OleDbCommand(commandText, Connection)
+
+                    Connection.Open()
+                    Dim reader1 As OleDbDataReader = CommandResult.ExecuteReader(CommandBehavior.CloseConnection)
+
+
+                    If multifields = False Then
+                        While reader1.Read()
+                            strOutput = Trim(reader1.GetString(0))
+                            Exit While
+                        End While
+                    Else
+                        While reader1.Read()
+                            strOutput = Trim(reader1.GetString(0))
+                            If CDbl(strOutput) > 1 Then
+                                strOutput = "MULTI"
+                                Exit While
+                            End If
+
+                            strOutput = Trim(reader1.GetString(1))
+                            If CDbl(strOutput) > 1 Then
+                                strOutput = "MULTI"
+                                Exit While
+                            End If
+
+                            strOutput = Trim(reader1.GetString(2))
+                            If CDbl(strOutput) > 0 Then
+                                strOutput = "MULTI"
+                                Exit While
+                            End If
+
+                            Exit While
+                        End While
+                    End If
+                    Connection.Close()
+                Catch
+                    Connection.Close()
+                End Try
+            End If
         End Try
 
-        'Debug.WriteLine("END: " + commandText)
+            'Debug.WriteLine("END: " + commandText)
 
-        Return strOutput
+            Return strOutput
 
     End Function
 
@@ -212,7 +258,7 @@ Public Class Database
         Dim strOrdersInfoDatabasePath As String = "C:\in_house_files\local_database\orders_info.dbf"
         Dim strRef As String
 
-        strRef = GetInfoFromDatabase("base_ref_number", "orders_info", "order_num", strAU, strOrdersInfoDatabasePath)
+        strRef = GetInfoFromDatabase("ref_number", "orders_info", "au_num", strAU, strOrdersInfoDatabasePath)
 
 
         Return strRef

@@ -175,7 +175,11 @@ Public Class frmMain
     End Sub
 
     Private Sub UpdateAreaLabel()
-        lblTotalActualArea.Text = "actual: " + txtTotalArea.Text
+        Try
+            lblTotalActualArea.Text = "actual: " + CStr(Math.Round(CDbl(txtTotalArea.Text), 4))
+        Catch
+            lblTotalActualArea.Text = "actual: " + txtTotalArea.Text
+        End Try
     End Sub
 
     Private Sub UpdateCctLabel()
@@ -777,7 +781,11 @@ done_already2:
     Private Sub GetTotalMhtArea()
         Dim strArea As String = Database.Library.Database.GetMhtArea(txtAuNumber.Text)
         Dim intBase As Integer = Math.Truncate(CDbl(strArea.Replace(" (inc Frame)", "")))
-        lblTotalMhtArea.Text = "mht:    " + strArea
+        Try
+            lblTotalMhtArea.Text = "mht:    " + CStr(Math.Round(CDbl(strArea), 4))
+        Catch
+            lblTotalMhtArea.Text = "mht:    " + strArea
+        End Try
         If intBase < 1 Then
             intBase = 1
         End If
@@ -785,13 +793,7 @@ done_already2:
             intBase = 50
         End If
         lblBaseMht.Text = "mht:    " + intBase.ToString
-
     End Sub
-
-    'Private Sub GetOrderRefNumber()
-    '    Dim ref As String = Database.Library.Database.GetOrderRef(txtAuNumber.Text)
-    '    orderRefNumber = ref
-    'End Sub
 
     Private Sub GetOrderMaterialThickness()
         Dim thickness As String = Database.Library.Database.GetOrderThickness(txtAuNumber.Text)
@@ -1258,7 +1260,7 @@ done_already2:
             material = 3 ' 3-ALU
         End If
 
-        Dim charge_area As Double = CDbl(txtTotalArea.Text)
+        Dim charge_area As Double = Math.Round(CDbl(txtTotalArea.Text), 4)
         Dim language As String = cmbLanguage.Text 'de,uk,za,us,fr,it,nl
         Dim quantity As Integer = txtCctCount.Text
 
@@ -1275,7 +1277,7 @@ done_already2:
 
         ' Dim soldermask As Integer = 1
 
-        Dim silkscreen As Integer = 0
+        Dim silkscreen As Integer = 4 ' 4 is no silkscreen on BOPP database
         If rdo1Silk.Checked = True Then
             silkscreen = 1
         End If
